@@ -53,7 +53,8 @@
   .puzzle{display:grid;gap:0}
 
   .cell{position:relative;aspect-ratio:1;z-index:1}
-  .cell:hover,.cell.active,.cell:focus-within{z-index:20}
+  .cell:hover,.cell.active,.cell:focus-visible{z-index:20}
+  .cell:has(:focus-visible){z-index:20}
 
   .piece-card{
     position:absolute;                 /* inset se fija por JS (incluye pestañas) */
@@ -68,8 +69,11 @@
     .cell:hover .piece-card{will-change:transform;transform:scale(var(--zoom,2));filter:drop-shadow(0 0 .6px rgba(18,50,74,.6)) drop-shadow(0 10px 14px rgba(18,50,74,.32))}
     .cell:hover .flip{transform:rotateY(180deg)}
   }
-  .cell.active .piece-card,.cell:focus-within .piece-card{will-change:transform;transform:scale(var(--zoom,2));filter:drop-shadow(0 0 .6px rgba(18,50,74,.6)) drop-shadow(0 10px 14px rgba(18,50,74,.32))}
-  .cell.active .flip,.cell:focus-within .flip{transform:rotateY(180deg)}
+  /* girada: al tocar (clase .active, se quita al volver a tocar) o con el teclado (:focus-visible; el foco por toque/clic no cuenta) */
+  .cell.active .piece-card,.cell:focus-visible .piece-card{will-change:transform;transform:scale(var(--zoom,2));filter:drop-shadow(0 0 .6px rgba(18,50,74,.6)) drop-shadow(0 10px 14px rgba(18,50,74,.32))}
+  .cell.active .flip,.cell:focus-visible .flip{transform:rotateY(180deg)}
+  .cell:has(:focus-visible) .piece-card{will-change:transform;transform:scale(var(--zoom,2));filter:drop-shadow(0 0 .6px rgba(18,50,74,.6)) drop-shadow(0 10px 14px rgba(18,50,74,.32))}
+  .cell:has(:focus-visible) .flip{transform:rotateY(180deg)}
   .cell:focus-visible{outline:none}
 
   /* cara frontal */
