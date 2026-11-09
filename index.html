@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Descubre el talento que tu empresa necesita</title>
+<meta name="description" content="10 mujeres profesionales de distintas disciplinas, listas para aportar criterio en cada proyecto. Descubre nuestras trayectorias y suma valor a tu equipo.">
+<meta name="theme-color" content="#12324a">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:title" content="Descubre el talento que tu empresa necesita">
+<meta property="og:description" content="10 mujeres profesionales de distintas disciplinas, listas para aportar criterio en cada proyecto. Descubre nuestras trayectorias y suma valor a tu equipo.">
+<!-- Cuando tengas la dirección pública, añade aquí la imagen para las vistas previas, p.ej.:
+<meta property="og:image" content="https://TU-USUARIO.github.io/TU-REPO/img/banner.jpg"> -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 8h8a4 4 0 1 1 8 0h8v8a4 4 0 1 0 0 8v4H4z' fill='%235ba8d4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#12324a;
+    --blue:#5ba8d4;
+    --blue-soft:#a9d0e8;
+    --blue-text:#2f6f9f;
+    --bg:#f3f8fc;
+    --puzzle-bg:#e6f1f9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Kumbh Sans','Segoe UI',system-ui,sans-serif;color:var(--navy);background:var(--bg);overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding-left:32px;padding-right:32px}
+
+  :focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
+  /* HERO */
+  .hero{display:flex;align-items:center;gap:64px;padding-top:72px;padding-bottom:88px}
+  .hero-text{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:28px;align-items:flex-start}
+  .hero h1{font-size:clamp(38px,4.6vw,62px);line-height:1.06;font-weight:800;letter-spacing:-.02em}
+  .hero h1 span{color:var(--blue-text)}
+  .hero p{font-size:18px;line-height:1.65;font-weight:300;max-width:560px}
+  .hero-art{flex:1 1 0;min-width:0;width:100%;max-width:560px}
+  .hero-art img{display:block;width:100%;height:auto;mix-blend-mode:multiply} /* funde el fondo blanco de la imagen con el de la página */
+
+  /* PERFILES (PUZZLE) */
+  .profiles{background:var(--puzzle-bg);padding:80px 0 120px}
+
+  .puzzle-wrap{max-width:1600px;margin:0 auto;padding:0 20px}
+  .puzzle{display:grid;gap:0}
+
+  .cell{position:relative;aspect-ratio:1;z-index:1}
+  .cell:hover,.cell.active,.cell:focus-within{z-index:20}
+
+  .piece-card{
+    position:absolute;                 /* inset se fija por JS (incluye pestañas) */
+    perspective:1000px;
+    filter:drop-shadow(0 0 .6px rgba(18,50,74,.55)) drop-shadow(0 3px 5px rgba(18,50,74,.18));
+    transition:transform .7s cubic-bezier(.4,.2,.2,1.1), filter .7s;
+  }
+  .flip{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.4,.2,.2,1)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+
+  @media (hover:hover){
+    .cell:hover .piece-card{transform:scale(var(--zoom,2));filter:drop-shadow(0 0 .6px rgba(18,50,74,.6)) drop-shadow(0 14px 22px rgba(18,50,74,.35))}
+    .cell:hover .flip{transform:rotateY(180deg)}
+  }
+  .cell.active .piece-card,.cell:focus-within .piece-card{transform:scale(var(--zoom,2));filter:drop-shadow(0 0 .6px rgba(18,50,74,.6)) drop-shadow(0 14px 22px rgba(18,50,74,.35))}
+  .cell.active .flip,.cell:focus-within .flip{transform:rotateY(180deg)}
+  .cell:focus-visible{outline:none}
+
+  /* cara frontal */
+  .front{background:#fff;font-size:calc(var(--cw) * 1px / 100)}
+  .front .wave{position:absolute;left:calc(var(--t) * 1px);width:calc(100% - var(--t) * 2px);height:9%;display:block}
+  .front .wave.top{top:calc(var(--t) * 1px)}
+  .front .wave.bottom{bottom:calc(var(--t) * 1px);transform:scaleY(-1)}   /* espejo vertical: el patrón enlaza con el de la fila de abajo */
+  .front .content{
+    position:absolute;inset:0;
+    padding:calc(var(--t) * 1px + var(--ft,10) * 1em) calc(var(--t) * 1px + var(--fx,8) * 1em) calc(var(--t) * 1px + var(--fb,10) * 1em);
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;  /* alineado arriba: foto, nombre y profesión quedan a la misma altura en toda la fila */
+  }
+  .avatar{overflow:hidden;width:25em;height:25em;border-radius:50%;border:1.4em solid var(--blue);padding:.9em;background:#fff;margin-bottom:1.8em;flex:none}
+  .avatar img,.avatar svg{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:50% 25%;display:block}
+  .name{font-weight:800;font-size:7em;line-height:1.15;white-space:nowrap}  /* nombre siempre en una sola línea */
+  .job{font-weight:600;font-size:4.1em;line-height:1.2;letter-spacing:.02em;margin-top:.8em;min-height:2.4em;color:var(--blue-text)}
+  .rule{width:50%;height:.35em;min-height:1px;background:var(--blue);margin:2em 0 1.6em;flex:none}
+  .tag{font-weight:400;font-size:3.9em;line-height:1.3}
+
+  /* cara trasera */
+  .back{
+    transform:rotateY(180deg);
+    background:var(--navy);
+    color:#fff;
+    font-size:calc(var(--cw) * 1px / 100);
+  }
+  .back .content{
+    position:absolute;inset:0;
+    /* más margen en los lados donde la pieza tiene un hueco (--pt/--pr/--pb/--pl las fija el JS) */
+    padding:calc(var(--t) * 1px + var(--pt,8) * 1em) calc(var(--t) * 1px + var(--pr,8) * 1em) calc(var(--t) * 1px + var(--pb,8) * 1em) calc(var(--t) * 1px + var(--pl,8) * 1em);
+    display:flex;flex-direction:column;justify-content:center;text-align:center;overflow:hidden;
+  }
+  .back h4{font-size:4.2em;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2.4em;color:var(--blue-soft)}
+  .back .social{display:flex;justify-content:center;gap:4em;margin-top:3em;flex:none}
+  .back .social a{display:flex;align-items:center;justify-content:center;width:9em;height:9em;border-radius:2em;background:#fff;color:var(--navy);transition:transform .2s,background .2s}
+  .back .social a:hover{background:var(--blue-soft);transform:translateY(-.4em)}
+  .back .social svg{width:5.6em;height:5.6em;display:block}
+  .back h3{font-size:5em;font-weight:800;line-height:1.15;margin-bottom:.9em;white-space:nowrap}
+  .back p{white-space:pre-line;font-size:3.5em;line-height:1.4;font-weight:300}
+
+  /* CTA */
+
+  footer{padding:48px 0}
+  footer .wrap{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:40px 72px}
+  footer img{display:block;height:64px;width:auto}
+  footer img.eoi{mix-blend-mode:multiply}      /* funde el fondo blanco del logo de EOI */
+
+  @media (max-width:899px){
+    .puzzle-wrap{max-width:680px}
+  }
+  @media (max-width:1100px){
+    .hero{flex-direction:column;align-items:flex-start}
+  }
+  @media (max-width:640px){
+    .wrap{padding-left:20px;padding-right:20px}
+    .puzzle-wrap{padding:0 12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .flip,.piece-card,.social a{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<section id="top" class="wrap hero">
+  <div class="hero-text">
+    <h1>Descubre el <span>talento</span> que tu <span>empresa</span> necesita</h1>
+    <p>Somos 10 mujeres profesionales de distintas disciplinas, unidas por un mismo objetivo y una visión transformadora. Combinamos perfiles únicos e innovadores con un motor imparable: generar un impacto real. Somos el talento que el futuro necesita, listas para aportar criterio en cada proyecto. Descubre nuestras trayectorias y suma valor a tu equipo.</p>
+  </div>
+  <div class="hero-art">
+    <img src="img/banner.jpg" alt="Siete chicas abrazadas de espaldas">
+  </div>
+</section>
+
+<section id="perfiles" class="profiles">
+  <div class="puzzle-wrap">
+    <div class="puzzle" id="puzzle"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <img class="eoi" src="img/logo-eoi.png"alt="EOI Escuela de Organización Industrial">
+    <img src="img/logo-valencia-innovation-capital-transparent.png" alt="València Innovation Capital">
+  </div>
+</footer>
+
+<script>
+/* ============ DATOS (edita aquí) ============ */
+// photo: ruta a la foto, p.ej. "img/fotos/ana.jpg". Si es null se usa una silueta.
+// focus: [x, y, zoom] para encuadrar la cara en el círculo (x e y = posición de la cara en la foto, en %; zoom = acercamiento).
+// linktree: si no es un enlace (p.ej. "por confirmar"), el icono de Linktree no se muestra.
+const people = [
+  {
+    name: "Adriana Arenas Ruiz",
+    job: "Comercio y estética integral especializada en diseño de mirada",
+    tag: "Proactiva - Disciplina - Trabajo en equipo",
+    about: "Trayectoria en comercio y estética integral especializada en diseño de mirada. Apasionada por el contenido digital y creación de contenido, futura estudiante de Docencia movida por la vocación de enseñar y comunicar. Aporto versatilidad, cercanía y rapidez de adaptación. Me diferencia mi perfil polivalente, compromiso y constante aprendizaje.",
+    linkedin: "https://www.linkedin.com/in/adrianaarenasruiz?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+    email: "adrianaarenaa1999@gmail.com",
+    linktree: "por confirmar",
+    photo: "img/fotos/foto-1.jpg", focus: [48, 36, 1.5]
+  },
+  {
+    name: "Cristina Santiago Piris",
+    job: "Diseñadora gráfica y web",
+    tag: "Mentalidad resolutiva - Comunicación efectiva - Adaptabilidad",
+    about: "Diseñadora con más de dos años de experiencia en diseño, desarrollo y mantenimiento de sitios web. Combino creatividad, criterio estético y conocimientos técnicos para crear experiencias visuales inmersivas, funcionales y coherentes. Tengo facilidad para integrarme en equipos multidisciplinares y adaptarme a diferentes metodologías de trabajo.",
+    linkedin: "https://www.linkedin.com/in/cristinasantiagopiris",
+    email: "cristina.s.piris@gmail.com",
+    linktree: "https://linktr.ee/CristinaSPiris",
+    photo: "img/fotos/foto-9.jpg", focus: [48.7, 52.5, 1.45]
+  },
+  {
+    name: "Irene Pérez Mocholí",
+    job: "Psicóloga",
+    tag: "Diseño de herramientas preventivas - Inclusión Comunitaria - Gestión e intervención de crisis",
+    about: "Como psicóloga dedicada a la intervención psicosocial y socioeducativa en población con diversidad funcional y adolescente aporto una mirada cercana, sensible e individualizada. Mi actitud dinámica me permite crear espacios seguros donde acompañar el desarrollo de habilidades sociales desde la empatía y la comprensión.",
+    linkedin: "https://www.linkedin.com/in/ireneperezmocholi",
+    email: "irene.ipm06@gmail.com",
+    linktree: "por confirmar",
+    photo: "img/fotos/foto-2.jpg", focus: [55, 45, 2.3]
+  },
+  {
+    name: "Manal Sadki Lahmar",
+    job: "Técnica en farmacia y parafarmacia",
+    tag: "Resolutiva - Trato cercano - Aprendizaje rápido",
+    about: "Técnica en Farmacia y Parafarmacia. Me gusta trabajar de cara al público, escuchar y ayudar a cada persona. Mi trato con niños, tanto en su cuidado como en clases de repaso, ha reforzado mi paciencia, comunicación y capacidad de adaptación. Me caracterizan la iniciativa, las ganas de aprender y la implicación en todo lo que hago.",
+    linkedin: "https://www.linkedin.com/in/manalsadki",
+    email: "manalsadki024@gmail.com",
+    linktree: "por confirmar",
+    photo: "img/fotos/foto-12.jpg", focus: [47, 41, 1.4]
+  },
+  {
+    name: "María Esteso Calatayud",
+    job: "Jurista en Asuntos Públicos, Marketing Político y Comunicación Institucional",
+    tag: "Mediación y gestión de crisis - Visión estratégica y multidisciplinar - Liderazgo con propósito social",
+    about: "Soy una jurista en formación continua. Enlazo derecho, comunicación política e IA para aportar visión humana, analítica y estratégica a la geopolítica y gestión de crisis. ¿Por qué yo? Porque mi motor es generar un impacto social real, aplicando mis conocimientos para transformar y generar un cambio positivo en nuestro entorno.",
+    linkedin: "https://www.linkedin.com/in/mariaesteso",
+    email: "mariaesteso99@gmail.com",
+    linktree: "por confirmar",
+    photo: "img/fotos/foto-3.jpg", focus: [51, 29, 1.9]
+  },
+  {
+    name: "Marta Cuerva Peinado",
+    job: "Consultora SEO & GEO",
+    tag: "Proactividad - Comunicación - Pensamiento estratégico",
+    about: "He gestionado más de 35 clientes de forma simultánea durante más de dos años. Me especializo en SEO on-page y off-page, optimización de contenidos y analítica web, con keywords en primera página de Google. Combino base técnica, redacción persuasiva y WordPress. Aporto criterio y conocimientos en IA para llevar el SEO a la era GEO.",
+    linkedin: "https://www.linkedin.com/in/martacuervapeinado",
+    email: "mcuerva1@gmail.com",
+    linktree: "por confirmar",
+    photo: "img/fotos/foto-4.jpg", focus: [57, 45, 2.6]
+  },
+  {
+    name: "Olivia Zapatero",
+    job: "Traductora interesada en marketing",
+    tag: "Honesta - Comprometida - Atenta",
+    about: "Graduada en Traducción y Mediación lingüística (francés, inglés, español y coreano), y enfocada también en marketing digital. Al haber vivido en Corea del Sur puedo aportar una visión global, flexibilidad, criterio e iniciativa. Gracias a mi actitud meticulosa, determinada y reflexiva soy capaz de llevar a buen puerto todos mis proyectos.",
+    linkedin: "https://www.linkedin.com/in/oliviazapatero",
+    email: "ozabeuv@gmail.com",
+    linktree: "por confirmar",
+    photo: "img/fotos/foto-11.jpg", focus: [50, 50, 1.1]
+  },
+  {
+    name: "Sandra Alonso Escrihuela",
+    job: "Diseñadora de experiencias de usuario",
+    tag: "Toma de decisión - Empatía - Flexibilidad",
+    about: "Como diseñadora con experiencia en transformar investigación en soluciones digitales puedo aportar el rigor metodológico, la prototipación de interfaces modulares y el pensamiento crítico. Conecto las necesidades del usuario con los objetivos de negocio mediante decisión, empatía y flexibilidad.",
+    linkedin: "https://www.linkedin.com/in/sandraalonso?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+    email: "saloesc.23@gmail.com",
+    linktree: "por confirmar",
+    photo: "img/fotos/foto-10.jpg", focus: [50, 43, 1.5]
+  },
+  {
+    name: "Sofia Quiroz Barahona",
+    job: "Jurista en Compliance & Sostenibilidad l IA e Innovación",
+    tag: "Compromiso - Carisma - Comunicación",
+    about: "Especializada en compliance, trabajo en inglés y español. Mi curiosidad por la IA y la innovación me llevó a aplicarla con criterio en lo legal. Analizo riesgos, interpreto normas y diseño flujos con IA agéntica para crear procesos productivos y responsables. Me diferencia mi compromiso con unir norma e innovación, siendo proactiva y empática.",
+    linkedin: "https://www.linkedin.com/in/sofiaquirozb/",
+    email: "sofiaqb09@gmail.com",
+    linktree: "por confirmar",
+    photo: "img/fotos/foto-5.jpg", focus: [46, 45, 2.8]
+  },
+  {
+    name: "Sonia Herrera Crespo",
+    job: "Técnica Superior en Administración de Sistemas informáticos en red (ASIR)",
+    tag: "Proactiva - Analítica - Resolutiva",
+    about: "¿Quién soy? Técnico Superior en ASIR y entusiasta de la ciberseguridad, redes y sistemas.\n¿Qué puedo aportar? Resolución eficiente de incidencias, gestión de infraestructura virtualizada y soporte técnico proactivo.\n¿Por qué yo? Por mi sólida base técnica, constante actualización y motivación por aportar valor real al equipo.",
+    linkedin: "https://www.linkedin.com/in/soniaherreracrespo?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+    email: "soniaherrcres@gmail.com",
+    linktree: "por confirmar",
+    photo: "img/fotos/foto-6.jpg", focus: [50, 44, 1.25]
+  }
+];
+const isUrl = s => /^https?:\/\//i.test(s || '');
+
+/* ============ AVATAR PLACEHOLDER ============ */
+const tones = ["#a9d0e8","#c5dfef","#9cc6e0","#b6d7ec","#8fbfdc"];
+function placeholder(i){
+  const bg = tones[i % tones.length];
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <rect width="100" height="100" fill="${bg}"/>
+    <circle cx="50" cy="38" r="17" fill="#12324a" opacity=".85"/>
+    <path d="M14 100c0-24 15-38 36-38s36 14 36 38z" fill="#12324a" opacity=".85"/></svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+
+/* ============ WAVES (SVG) ============ */
+const waveSVG = `
+<svg class="wave %POS%" viewBox="0 0 400 100" preserveAspectRatio="none" aria-hidden="true">
+  <defs><linearGradient id="g%ID%" x1="0" x2="1"><stop offset="0" stop-color="#a9d0e8"/><stop offset=".5" stop-color="#5ba8d4"/><stop offset="1" stop-color="#a9d0e8"/></linearGradient></defs>
+  <path d="M0 0H400V40C300 18 100 62 0 40Z" fill="url(#g%ID%)"/>
+  <path d="M0 66C100 88 300 44 400 66" fill="none" stroke="#5ba8d4" stroke-width="6"/>
+</svg>`;
+
+/* ============ CONSTRUCCIÓN DEL DOM ============ */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const puzzle = document.getElementById('puzzle');
+const cells = people.map((p, i) => {
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.tabIndex = 0;
+  cell.innerHTML = `
+    <div class="piece-card">
+      <div class="flip">
+        <div class="face front">
+          ${waveSVG.replace('%POS%','top').replaceAll('%ID%', i+'t')}
+          ${waveSVG.replace('%POS%','bottom').replaceAll('%ID%', i+'b')}
+          <div class="content">
+            <div class="avatar"><img alt="Foto de ${esc(p.name)}" src="${esc(p.photo || placeholder(i))}"${p.photo && p.focus ? ` style="object-position:${p.focus[0]}% ${p.focus[1]}%;transform:scale(${p.focus[2]}) translate(${50-p.focus[0]}%,${50-p.focus[1]}%)"` : ''}></div>
+            <div class="name">${esc(p.name)}</div>
+            <div class="job">${esc(p.job)}</div>
+            <div class="rule"></div>
+            <div class="tag">${esc(p.tag)}</div>
+          </div>
+        </div>
+        <div class="face back">
+          <div class="content">
+            <h3>${esc(p.name)}</h3>
+            <p style="font-size:${p.about.length > 400 ? 3.1 : 3.5}em">${esc(p.about)}</p>
+            <div class="social">
+              <a href="${esc(p.linkedin)}" target="_blank" rel="noopener" aria-label="LinkedIn de ${esc(p.name)}">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+              </a>
+              ${isUrl(p.linktree) ? `<a href="${esc(p.linktree)}" target="_blank" rel="noopener" aria-label="Linktree de ${esc(p.name)}">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m13.73635 5.85251 4.00467-4.11665 2.3248 2.3808-4.20064 4.00466h5.9085v3.30473h-5.9365l4.22865 4.10766-2.3248 2.3338L12.0005 12.099l-5.74052 5.76852-2.3248-2.3248 4.22864-4.10766h-5.9375V8.12132h5.9085L3.93417 4.11666l2.3248-2.3808 4.00468 4.11665V0h3.4727zm-3.4727 10.30614h3.4727V24h-3.4727z"/></svg>
+              </a>` : ''}
+              <a href="mailto:${esc(p.email)}" aria-label="Enviar correo a ${esc(p.name)}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.500 7l8.500 6.500L20.500 7"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  // en pantallas táctiles: tocar para girar
+  cell.addEventListener('click', e => {
+    if (matchMedia('(hover:hover)').matches || e.target.closest('a')) return;
+    const was = cell.classList.contains('active');
+    cells.forEach(c => c.classList.remove('active'));
+    if (!was) cell.classList.add('active');
+  });
+  puzzle.appendChild(cell);
+  return cell;
+});
+
+/* ============ FORMA DE PUZLE ============ */
+// Dibuja un borde de A a B (sentido horario). s: 1 pestaña hacia fuera, -1 hueco, 0 recto.
+function edge(A, B, s, k, c0){
+  const f = n => n.toFixed(2);
+  if (!s) return `L${f(B.x)} ${f(B.y)} `;
+  const L = Math.hypot(B.x-A.x, B.y-A.y);
+  const d = {x:(B.x-A.x)/L, y:(B.y-A.y)/L};
+  const n = {x:d.y, y:-d.x};
+  const pt = (u,v) => `${f(A.x + d.x*(c0+u*k) + n.x*v*k*s)} ${f(A.y + d.y*(c0+u*k) + n.y*v*k*s)}`;
+  const r = .11*k;
+  return `L${pt(-.17,0)} C${pt(-.10,0)} ${pt(-.08,.02)} ${pt(-.08,.0445)} ` +
+         `A${f(r)} ${f(r)} 0 1 ${s>0?1:0} ${pt(.08,.0445)} ` +
+         `C${pt(.08,.02)} ${pt(.10,0)} ${pt(.17,0)} L${f(B.x)} ${f(B.y)} `;
+}
+
+function layout(){
+  const cols = matchMedia('(min-width:900px)').matches ? 5 : 2;
+  const rows = Math.ceil(cells.length / cols);
+  puzzle.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+  const cw = cells[0].clientWidth, ch = cells[0].clientHeight;
+  const k = .64*Math.min(cw, ch);
+  const T = .23*k;                    // margen para las pestañas
+  const W = cw + 2*T, H = ch + 2*T;
+
+  // signo de las pestañas compartidas
+  // (en la última fila el patrón se invierte para que las piezas de las esquinas inferiores saquen su pestaña hacia la vecina)
+  const hs = (r,c) => (((r===rows-1 ? 0 : r)+c)%2===0 ? 1 : -1);   // borde entre (r,c) y (r,c+1)
+  const vs = (r,c) => ((r+c)%2===0 ? -1 : 1);   // borde entre (r,c) y (r+1,c)
+
+  cells.forEach((cell, idx) => {
+    const r = Math.floor(idx/cols), c = idx % cols;
+    const top    = r>0        ? -vs(r-1,c) : 0;
+    const right  = c<cols-1   ?  hs(r,c)   : 0;
+    const bottom = r<rows-1 && idx+cols<cells.length ? vs(r,c) : 0;
+    const left   = c>0        ? -hs(r,c-1) : 0;
+
+    const p0={x:T,y:T}, p1={x:T+cw,y:T}, p2={x:T+cw,y:T+ch}, p3={x:T,y:T+ch};
+    const path = `M${p0.x} ${p0.y} ` + edge(p0,p1,top,k,cw/2) + edge(p1,p2,right,k,ch*.32) + edge(p2,p3,bottom,k,cw/2) + edge(p3,p0,left,k,ch*.68) + 'Z';
+
+    const piece = cell.querySelector('.piece-card');
+    piece.style.left = piece.style.top = `${-T}px`;
+    piece.style.width = `${W}px`; piece.style.height = `${H}px`;
+    // las olas solo van en el borde superior de la primera fila y el inferior de la última
+    cell.querySelector('.wave.top').style.display = r === 0 ? '' : 'none';
+    cell.querySelector('.wave.bottom').style.display = r === rows-1 ? '' : 'none';
+
+    // la pieza crece hacia dentro en las columnas de los bordes para no salirse de la pantalla
+    const rect = puzzle.getBoundingClientRect();
+    const room = innerWidth - 24;
+    let zoom = 1.75, origin = '50%';
+    if (c === 0)           { origin = `${T}px`;     zoom = Math.min(zoom, (room - rect.left) / cw); }
+    else if (c === cols-1) { origin = `${W - T}px`; zoom = Math.min(zoom, (rect.right - 12) / cw); }
+    else                   { zoom = Math.min(zoom, (2*Math.min(rect.left + c*cw + cw/2, innerWidth - rect.left - (cols-c-1)*cw - cw/2) - 24) / cw); }
+    piece.style.transformOrigin = `${origin} 50%`;
+    piece.style.setProperty('--zoom', Math.max(1.3, zoom).toFixed(3));
+    // margen del texto: 21em donde hay hueco (profundidad ~19em), 8em en el resto
+    const padV = s => s < 0 ? 24 : 8;    // hueco arriba/abajo: más margen
+    const padH = s => s < 0 ? 15 : 8;    // hueco a los lados: menos margen, el texto aprovecha más ancho
+    piece.style.setProperty('--fx', 8);
+    // cara delantera: margen fijo por fila (así los nombres quedan alineados) para separar avatar y texto de los huecos
+    const edgeRow = rows > 1 ? (r === 0 ? 'first' : r === rows-1 ? 'last' : 'mid') : 'only';
+    piece.style.setProperty('--ft', edgeRow === 'first' || edgeRow === 'only' ? 15 : 18);
+    piece.style.setProperty('--fb', edgeRow === 'last'  || edgeRow === 'only' ? 10 : 18);
+    piece.style.setProperty('--pt', padV(top));
+    piece.style.setProperty('--pr', padH(right));
+    piece.style.setProperty('--pb', padV(bottom));
+    piece.style.setProperty('--pl', padH(left));
+    piece.style.setProperty('--cw', cw);
+    piece.style.setProperty('--t', T);
+    cell.querySelectorAll('.face').forEach(face => face.style.clipPath = `path('${path}')`);
+  });
+}
+
+layout();
+new ResizeObserver(layout).observe(puzzle);
+addEventListener('load', layout);
+</script>
+</body>
+</html>
