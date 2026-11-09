@@ -13,9 +13,14 @@
 <!-- Cuando tengas la dirección pública, añade aquí la imagen para las vistas previas, p.ej.:
 <meta property="og:image" content="https://TU-USUARIO.github.io/TU-REPO/img/banner.jpg"> -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 8h8a4 4 0 1 1 8 0h8v8a4 4 0 1 0 0 8v4H4z' fill='%235ba8d4'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/kumbh-sans.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  /* Kumbh Sans alojada en la propia web (sin depender de Google Fonts) */
+  @font-face{
+    font-family:'Kumbh Sans';font-style:normal;font-weight:300 800;font-display:swap;
+    src:url(fonts/kumbh-sans.woff2) format('woff2');
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  }
   :root{
     --navy:#12324a;
     --blue:#5ba8d4;
@@ -54,16 +59,16 @@
     position:absolute;                 /* inset se fija por JS (incluye pestañas) */
     perspective:1000px;
     filter:drop-shadow(0 0 .6px rgba(18,50,74,.55)) drop-shadow(0 3px 5px rgba(18,50,74,.18));
-    transition:transform .7s cubic-bezier(.4,.2,.2,1.1), filter .7s;
+    transition:transform .7s cubic-bezier(.4,.2,.2,1.1);   /* sin transición de filter: repintar sombras cada fotograma es lo más costoso */
   }
   .flip{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.4,.2,.2,1)}
   .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
 
   @media (hover:hover){
-    .cell:hover .piece-card{transform:scale(var(--zoom,2));filter:drop-shadow(0 0 .6px rgba(18,50,74,.6)) drop-shadow(0 14px 22px rgba(18,50,74,.35))}
+    .cell:hover .piece-card{will-change:transform;transform:scale(var(--zoom,2));filter:drop-shadow(0 0 .6px rgba(18,50,74,.6)) drop-shadow(0 10px 14px rgba(18,50,74,.32))}
     .cell:hover .flip{transform:rotateY(180deg)}
   }
-  .cell.active .piece-card,.cell:focus-within .piece-card{transform:scale(var(--zoom,2));filter:drop-shadow(0 0 .6px rgba(18,50,74,.6)) drop-shadow(0 14px 22px rgba(18,50,74,.35))}
+  .cell.active .piece-card,.cell:focus-within .piece-card{will-change:transform;transform:scale(var(--zoom,2));filter:drop-shadow(0 0 .6px rgba(18,50,74,.6)) drop-shadow(0 10px 14px rgba(18,50,74,.32))}
   .cell.active .flip,.cell:focus-within .flip{transform:rotateY(180deg)}
   .cell:focus-visible{outline:none}
 
@@ -135,7 +140,7 @@
     <p>Somos 10 mujeres profesionales de distintas disciplinas, unidas por un mismo objetivo y una visión transformadora. Combinamos perfiles únicos e innovadores con un motor imparable: generar un impacto real. Somos el talento que el futuro necesita, listas para aportar criterio en cada proyecto. Descubre nuestras trayectorias y suma valor a tu equipo.</p>
   </div>
   <div class="hero-art">
-    <img src="img/banner.jpg" alt="Siete chicas abrazadas de espaldas">
+    <img src="img/banner.jpg" width="1218" height="656" fetchpriority="high" decoding="async" alt="Siete chicas abrazadas de espaldas">
   </div>
 </section>
 
@@ -147,8 +152,8 @@
 
 <footer>
   <div class="wrap">
-    <img class="eoi" src="img/logo-eoi.png"alt="EOI Escuela de Organización Industrial">
-    <img src="img/logo-valencia-innovation-capital-transparent.png" alt="València Innovation Capital">
+    <img class="eoi" src="img/logo-eoi.png" width="648" height="167" loading="lazy" decoding="async" alt="EOI Escuela de Organización Industrial">
+    <img src="img/logo-valencia-innovation-capital-transparent.png" width="469" height="184" loading="lazy" decoding="async" alt="València Innovation Capital">
   </div>
 </footer>
 
@@ -294,7 +299,7 @@ const cells = people.map((p, i) => {
           ${waveSVG.replace('%POS%','top').replaceAll('%ID%', i+'t')}
           ${waveSVG.replace('%POS%','bottom').replaceAll('%ID%', i+'b')}
           <div class="content">
-            <div class="avatar"><img alt="Foto de ${esc(p.name)}" src="${esc(p.photo || placeholder(i))}"${p.photo && p.focus ? ` style="object-position:${p.focus[0]}% ${p.focus[1]}%;transform:scale(${p.focus[2]}) translate(${50-p.focus[0]}%,${50-p.focus[1]}%)"` : ''}></div>
+            <div class="avatar"><img alt="Foto de ${esc(p.name)}" decoding="async" src="${esc(p.photo || placeholder(i))}"${p.photo && p.focus ? ` style="object-position:${p.focus[0]}% ${p.focus[1]}%;transform:scale(${p.focus[2]}) translate(${50-p.focus[0]}%,${50-p.focus[1]}%)"` : ''}></div>
             <div class="name">${esc(p.name)}</div>
             <div class="job">${esc(p.job)}</div>
             <div class="rule"></div>
